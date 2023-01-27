@@ -16,7 +16,7 @@ export async function pushUserData(
   if (process.env.NODE_ENV === "production") toLocalhost = false;
   else toLocalhost = true;
 
-  let url = "http://localhost:3000/api/pushUserData";
+  let url = "http://localhost:3000/api/push-user-data";
 
   const obj = [user];
   return await sendPostReq(obj, url);
@@ -24,20 +24,14 @@ export async function pushUserData(
 
 export async function getUserData(
   pid: string
-): Promise<{ data: any; isExpired: boolean }> {
+){
   let toLocalhost;
   if (process.env.NODE_ENV === "production") toLocalhost = false;
   else toLocalhost = true;
 
-  let url = `http://localhost:3000/api/getUserData?pid=${pid}`;
+  let url = `http://localhost:3000/api/get-user-data`;
+  console.log(pid)
+  let obj = {id: pid}
 
-  const response = await fetch(url);
-
-  let isExpired = false;
-  let data = [];
-
-  if (response.status === 410) isExpired = true;
-  else data = JSON.parse(await response.json());
-
-  return { data: data, isExpired };
+  return await sendPostReq(obj, url);
 }
