@@ -104,9 +104,8 @@ class mySQLclient extends mySQLutils {
   }
 
   async _getUsers(): Promise<any | undefined> {
-    const user = await this.selectFrom("users", "*");
-    if (user.length === 0) return; // user not found
-    return user[0];
+    const users = await this.selectFrom("users", "*");
+    return users;
   }
 
   async getUserByData(userData: any) {

@@ -35,3 +35,15 @@ export async function getUserData(
 
   return await sendPostReq(obj, url);
 }
+
+export async function addUser(userdata: any) {
+  const response = await fetch("/api/register", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(userdata),
+  });
+
+  if (!response.ok) alert(await response.text());
+}
