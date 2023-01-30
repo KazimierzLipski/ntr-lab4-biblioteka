@@ -3,24 +3,17 @@ import { addUser } from "@/lib/apiRequests";
 import { NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 const Register: NextPage<{}> = () => {
   const router = useRouter();
 
-  const usernameRef = useRef<HTMLInputElement>(null);
-  const passwordRef = useRef<HTMLInputElement>(null);
+  const [username, setUsername] = useState<string>("")
+  const [password, setPassword] = useState<string>("")
 
   const registerHandler = async () => {
-    const username = usernameRef.current?.value;
-    const password = passwordRef.current?.value;
-
-    if (username!.trim().length <= 4) {
+    if (username.length <= 3) {
       alert("Username is too short.");
-      return;
-    }
-    if (password?.length === 0) {
-      alert("Passwords are empty.");
       return;
     }
 
@@ -36,17 +29,19 @@ const Register: NextPage<{}> = () => {
         <label>
           <div>Login</div>
           <input
-            ref={usernameRef}
             type="text"
             className="border my-1 border-gray-600"
+            value={username}
+            onChange={(event) => setUsername(event.target.value)}
           />
         </label>
         <label>
           <div>Password</div>
           <input
-            ref={passwordRef}
             type="password"
             className="border my-1 border-gray-600"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
           />
         </label>
         <Button onClick={registerHandler}>Register</Button>

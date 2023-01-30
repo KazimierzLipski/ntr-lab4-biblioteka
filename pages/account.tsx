@@ -12,7 +12,6 @@ const Account: NextPage<{}> = (props) => {
   const router = useRouter();
   const deleteAccountHandler = async () => {
     if (privilege === 0) {
-      // if no books then do this
       let success = await deleteUser(session?.user?.name);
       success && signOut();
       success && router.push("/");

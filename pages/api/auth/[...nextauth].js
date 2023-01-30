@@ -13,10 +13,6 @@ export const authOptions = {
   secret: "Library",
   pages: {
     signIn: '/auth/credentials-signin',
-    //signOut: '/auth/signout',
-    //error: '/auth/error', // Error code passed in query string as ?error=
-    //verifyRequest: '/auth/verify-request', // (used for check email message)
-    //newUser: '/auth/new-user' // New users will be directed here on first sign in (leave the property out if not of interest)
   },
   // Configure one or more authentication providers
   providers: [

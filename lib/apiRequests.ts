@@ -1,14 +1,3 @@
-async function sendPostReq(data: Object, url: string) {
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
-  return response;
-}
-
 export async function addUser(userdata: any) {
   const response = await fetch("/api/register", {
     method: "POST",

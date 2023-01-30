@@ -6,16 +6,16 @@ const SelectInput: React.FC<{
   columns?: string;
   valueChange: (val: number, toChange: string) => void;
 }> = (props) => {
-  const [value, setValue] = useState<string>(props.id + "Yes");
+  const [value, setValue] = useState<string>(props.id + "all");
   const onValueChanged = (event: FormEvent) => {
     let myId = event.currentTarget.id;
     setValue(myId);
     let optionSelected: number = 0;
-    if(myId.includes("Yes")){
+    if(myId.includes("all")){
       optionSelected = 0;
-    } else if(myId.includes("No")){
+    } else if(myId.includes("reserve")){
       optionSelected = 1;
-    } else if(myId.includes("xd")){
+    } else if(myId.includes("lend")){
       optionSelected = 2;
     }
     props.valueChange(optionSelected, props.id);
@@ -32,7 +32,7 @@ const SelectInput: React.FC<{
               type="radio"
               id={props.id + "Yes"}
               name={props.id}
-              checked={value === props.id + "Yes"}
+              checked={value === props.id + "all"}
               onChange={onValueChanged}
               className="self-center h-5 w-5 border-2 rounded-full appearance-none grid place-content-center
               before:bg-orange-mid before:h-3 before:w-3 before:rounded-full before:scale-0 before:checked:scale-100 before:transition-transform cursor-pointer"
@@ -48,7 +48,7 @@ const SelectInput: React.FC<{
               type="radio"
               id={props.id + "No"}
               name={props.id}
-              checked={value === props.id + "No"}
+              checked={value === props.id + "reserve"}
               onChange={onValueChanged}
               className="self-center h-5 w-5 border-2 rounded-full appearance-none grid place-content-center
               before:bg-orange-mid before:h-3 before:w-3 before:rounded-full before:scale-0 before:checked:scale-100 before:transition-transform cursor-pointer"
@@ -64,7 +64,7 @@ const SelectInput: React.FC<{
               type="radio"
               id={props.id + "xd"}
               name={props.id}
-              checked={value === props.id + "xd"}
+              checked={value === props.id + "lend"}
               onChange={onValueChanged}
               className="self-center h-5 w-5 border-2 rounded-full appearance-none grid place-content-center
               before:bg-orange-mid before:h-3 before:w-3 before:rounded-full before:scale-0 before:checked:scale-100 before:transition-transform cursor-pointer"
