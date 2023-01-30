@@ -1,4 +1,4 @@
-import mySQLclientLibrary from "@/lib/mySQLclient";
+import mySQLClientLibrary from "@/lib/mySQLclient";
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials";
 
@@ -11,31 +11,34 @@ export const authOptions = {
     strategy: "jwt",
   },
   secret: "Library",
+  pages: {
+    signIn: '/auth/credentials-signin',
+    //signOut: '/auth/signout',
+    //error: '/auth/error', // Error code passed in query string as ?error=
+    //verifyRequest: '/auth/verify-request', // (used for check email message)
+    //newUser: '/auth/new-user' // New users will be directed here on first sign in (leave the property out if not of interest)
+  },
   // Configure one or more authentication providers
   providers: [
     CredentialsProvider({
       credentials: {
-        username: { label: "Username", type: "text", placeholder: "jsmith" },
+        username: { label: "Username", type: "text" },
         password: { label: "Password", type: "password" },
       },
 
       async authorize(credentials) {
-        const dbClient = new mySQLclientLibrary();
-        const userList = await dbClient.getUsers();
+        const dbClient = new mySQLClientLibrary();
+        const potentialUser = await dbClient.getUserByUsername(credentials?.username);
         dbClient.connection.end();
 
-        const foundUser = userList.find(
-          (usr) => usr.name === credentials?.username
-        );
-
-        if (!foundUser) {
+        if (!potentialUser) {
           throw new Error("User not found");
         }
-        if (foundUser.password !== credentials?.password) {
+        if (potentialUser.password !== credentials?.password) {
           throw new Error("Bad password");
         }
 
-        return { name: foundUser.name };
+        return { name: potentialUser.name };
       },
 
     }),

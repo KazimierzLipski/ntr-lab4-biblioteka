@@ -108,13 +108,8 @@ class mySQLclient extends mySQLutils {
     return users;
   }
 
-  async getUserByData(userData: any) {
-    let whereSQLexp = `name = '${userData.name}'`;
-    return this._getUser(whereSQLexp);
-  }
-
-  async getUserByID(userID: number) {
-    const whereSQLexp = "user_id = " + userID;
+  async getUserByUsername(username: string) {
+    const whereSQLexp = `name = "${username}" `;
     return this._getUser(whereSQLexp);
   }
 
@@ -122,30 +117,10 @@ class mySQLclient extends mySQLutils {
     return this._getUsers();
   }
 
-  async deleteOldOffers(insuranceID: number) {
-    const sql = `DELETE FROM offers WHERE insurance_id = ${insuranceID} and is_chosen != 1`;
-    return this._query(sql);
-  }
 
-  async setChosenOffer(offerID: number) {
-    const sql = `UPDATE offers SET is_chosen = 1 WHERE offer_id = ${offerID};`;
-    return this._query(sql);
-  }
-
-  async setInsuranceUsed(insuranceID: number) {
-    const sql = `UPDATE insurances SET used = 1 WHERE insurance_id = ${insuranceID};`;
-    return this._query(sql);
-  }
-
-  async setPaymentOption(insuranceID: number, paymentOption: 1 | 2 | 3) {
-    await this.insertInto("payments", {
-      insurance_id: insuranceID,
-      payment_option: paymentOption,
-    });
-  }
 }
 
-export default class mySQLclientLibrary extends mySQLclient {
+export default class mySQLClientLibrary extends mySQLclient {
   constructor() {
     const conf = {
       host: "localhost",
@@ -157,4 +132,55 @@ export default class mySQLclientLibrary extends mySQLclient {
     super(conf);
     this.conf = conf;
   }
+
+  async deleteUser(username: string): Promise<ResultSetHeader> {
+    const res = await this._getUser(`name = "${username}"`)
+    const id = res.id;
+    const sql = `
+    DELETE FROM users
+    WHERE name = "${username}"
+    AND ${id} NOT IN (SELECT user_id FROM books);
+    `;
+    return this._query(sql);
+  }
+
+  async reserveBook(username: string, book_id: number, updated_at: string): Promise<ResultSetHeader> {
+    const res = await this._getUser(`name = "${username}"`)
+    let dd = new Date(updated_at).addHours(1)
+    const newDate = dd.toISOString().replace('T', ' ').replace('Z', '')
+    const lol = await this._query(`CALL check_time("${book_id}","${newDate}");`)
+    const id = res.id;
+    const sql = `
+    UPDATE books
+    SET user_id = ${id}, reserved = NOW()
+    WHERE id = ${book_id};`;
+    return this._query(sql);
+  }
+
+  async unreserveBook(book_id: number): Promise<ResultSetHeader> {
+    const sql = `
+    UPDATE books
+    SET user_id = NULL, reserved = NULL
+    WHERE id = ${book_id};`;
+    return this._query(sql);
+  }
+
+  async lendBook(username: string, book_id: number): Promise<ResultSetHeader> {
+    const res = await this._getUser(`name = "${username}"`)
+    const id = res.id;
+    const sql = `
+    UPDATE books
+    SET leased = NOW()
+    WHERE id = ${book_id};`;
+    return this._query(sql);
+  }
+
+  async unlendBook(book_id: number): Promise<ResultSetHeader> {
+    const sql = `
+    UPDATE books
+    SET user_id = NULL, reserved = NULL, leased = NULL
+    WHERE id = ${book_id};`;
+    return this._query(sql);
+  }
+
 }

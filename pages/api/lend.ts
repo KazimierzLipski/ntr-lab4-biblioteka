@@ -11,10 +11,10 @@ export default async function handler(
 
   const dbClient = new mySQLClientLibrary();
   try {
-    await dbClient.insertInto("users", newUserData);
+    await dbClient.lendBook(newUserData.user_name, newUserData.book_id);
   } catch (e) {
     console.error(e);
-    return res.status(400).send("User could not be added");
+    return res.status(400).send("Book could not be edited");
   } finally {
     dbClient.connection.end();
   }

@@ -5,19 +5,20 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method !== "POST") return res.status(405).send("");
-
-  const newUserData = req.body;
+  //if (req.method !== "GET") return res.status(405).send("");
 
   const dbClient = new mySQLClientLibrary();
+
+  let user = {};
+
   try {
-    await dbClient.insertInto("users", newUserData);
+    user = await dbClient.getUserByUsername(req.body.user_id);
   } catch (e) {
     console.error(e);
-    return res.status(400).send("User could not be added");
+    return res.status(400).send("Can't check user privilege");
   } finally {
     dbClient.connection.end();
   }
 
-  return res.status(200).send("");
+  return res.status(200).send(user);
 }
