@@ -148,7 +148,7 @@ export default class mySQLClientLibrary extends mySQLclient {
     const res = await this._getUser(`name = "${username}"`)
     let dd = new Date(updated_at).addHours(1)
     const newDate = dd.toISOString().replace('T', ' ').replace('Z', '')
-    const lol = await this._query(`CALL check_time("${book_id}","${newDate}");`)
+    const checkConcurrency = await this._query(`CALL check_time("${book_id}","${newDate}");`)
     const id = res.id;
     const sql = `
     UPDATE books
